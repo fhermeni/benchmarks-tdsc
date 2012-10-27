@@ -12,14 +12,12 @@ import entropy.plan.partitioner.OtherPartitioning;
 import entropy.plan.partitioner.Partition;
 import entropy.plan.partitioner.PartitioningException;
 import entropy.template.DefaultVirtualMachineTemplateFactory;
+import entropy.template.VirtualMachineTemplateFactory;
 import entropy.template.stub.StubVirtualMachineTemplate;
 import entropy.vjob.*;
 import entropy.vjob.builder.DefaultVJobElementBuilder;
 import entropy.vjob.builder.VJobElementBuilder;
 import gnu.trove.THashSet;
-import microDSN.template.LargeEC2;
-import microDSN.template.SmallEC2;
-import microDSN.template.XLargeEC2;
 
 import java.io.File;
 import java.util.*;
@@ -165,21 +163,7 @@ public class BenchPartitionner2 {
     }
 
     private static BtrPlaceVJobBuilder makeVJobBuilder() throws Exception {
-        DefaultVirtualMachineTemplateFactory tplFactory = new DefaultVirtualMachineTemplateFactory();
-        tplFactory.add(new SmallEC2());
-        tplFactory.add(new LargeEC2());
-        tplFactory.add(new XLargeEC2());
-
-        int[] cpu = {20, 30, 50, 60};
-        int[] mem = {100, 200, 300};
-        for (int c : cpu) {
-            for (int m : mem) {
-                StubVirtualMachineTemplate st = new StubVirtualMachineTemplate("c" + c + "m" + m, 1, c, m, new THashSet<String>());
-                tplFactory.add(st);
-            }
-        }
-
-
+        VirtualMachineTemplateFactory tplFactory = TDSC.makeTemplateFactory();
         VJobElementBuilder eb = new DefaultVJobElementBuilder(tplFactory);
         ConstraintsCatalog cat = new ConstraintsCatalogBuilderFromProperties(new PropertiesHelper("config/btrpVjobs.properties")).build();
         return new BtrPlaceVJobBuilder(eb, cat);

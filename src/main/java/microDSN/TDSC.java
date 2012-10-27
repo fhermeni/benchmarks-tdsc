@@ -29,6 +29,7 @@ import choco.kernel.common.logging.Verbosity;
 import entropy.PropertiesHelper;
 import entropy.configuration.*;
 import entropy.configuration.parser.FileConfigurationSerializerFactory;
+import entropy.plan.Plan;
 import entropy.plan.TimedReconfigurationPlan;
 import entropy.plan.choco.CustomizableSplitablePlannerModule;
 import entropy.plan.durationEvaluator.DurationEvaluator;
@@ -101,33 +102,24 @@ public class TDSC {
             ConstraintsCatalog cat = new ConstraintsCatalogBuilderFromProperties(new PropertiesHelper("config/btrpVjobs.properties")).build();
             BtrPlaceVJobBuilder b = new BtrPlaceVJobBuilder(eb, cat);
             b.setIncludes(new BasicIncludes());
-            //generateSize(b, durations, "tdsc-X", NB_INSTANCES);
-            generatePart(b, durations, "tdsc-part3", 3, 100/*NB_INSTANCES*/);
-            //generatePart(b, durations, "tdsc-part6", 6, NB_INSTANCES);
-            //generatePart(b, durations, "tdsc-part5", 5, NB_INSTANCES);
-            //generatePart(b, durations, "tdsc-part4", 4, NB_INSTANCES);
-            //generatePart(b, durations, "tdsc-X", NB_INSTANCES);
-
-
+            int [] ratios = {3,4,5,6};
+            for (int i  : ratios) {
+                generate(b, durations, "wkld" + File.separator + "r" + i, i, 5);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println(e.getMessage());
         }
     }
 
-    private static void dumpPart(VJobBuilder b, String output, List<VJob> vjobs, List<String> scriptsWithConstraints, VJob fencer, List<ManagedElementSet<Node>> splits, String infra) throws Exception {
+    private static void dumpPart(VJobBuilder b, String output, List<VJob> vjobs, List<String> scriptsWithConstraints, VJob fencer, List<ManagedElementSet<Node>> splits, String infra, int size) throws Exception {
 
-        int[] parts = new int[]{250, 500, 1000, 2500, 5000};
-        System.out.println("--- Part ---");
-        for (int i : parts) {
-            System.out.println(i + " servers");
-            String rep = output + File.separator + "part" + i;
-            dumpScripts(b, rep, vjobs, scriptsWithConstraints, infra);
-            basicFencerDump(mergeFences(fencer, mergeBy(splits, i), "fencer" + i), rep);
+            dumpScripts(b, output, vjobs, scriptsWithConstraints, infra);
+            basicFencerDump(mergeFences(fencer, mergeBy(splits, size), "fencer" + size), output);
 
             PrintWriter out = null;
             try {
-                out = new PrintWriter(new FileWriter(rep + File.separator + "datacenter.btrp"));
+                out = new PrintWriter(new FileWriter(output + File.separator + "datacenter.btrp"));
                 out.print(infra);
                 out.close();
             } finally {
@@ -135,10 +127,10 @@ public class TDSC {
                     out.close();
                 }
             }
-        }
+       // }
     }
 
-    private static VirtualMachineTemplateFactory makeTemplateFactory() {
+    public static VirtualMachineTemplateFactory makeTemplateFactory() {
         DefaultVirtualMachineTemplateFactory tplFactory = new DefaultVirtualMachineTemplateFactory();
         int[] cpu = {30, 40, 50, 60};
         int[] mem = {100, 200, 300};
@@ -262,106 +254,9 @@ public class TDSC {
         return fencer;
     }
 
+    private static void generate(BtrPlaceVJobBuilder b, DurationEvaluator durations, String output, int ratio, int nbInstances) {
 
-    private static void generateSize(BtrPlaceVJobBuilder b, DurationEvaluator durations, String output, int nbInstances) {
-        int[] sizes = {250, 500, 1000, 2500, 4000, 5000};
-        ChocoLogging.setVerbosity(Verbosity.SILENT);
-        SplitableVJobLauncher plan = new SplitableVJobLauncher(durations);
-        plan.setPartitioningMode(SplitableVJobLauncher.PartitioningMode.sequential);
-
-        for (int s : sizes) {
-            String root = output + File.separator + "s" + s;
-            Configuration cfg = createInfra(s, NB_CPUS, SERVER_UCPU, SERVER_MEM);
-            b.getElementBuilder().useConfiguration(cfg);
-            BtrPlaceVJob infra = null;
-            String dc = storeInfra(cfg, SWITCH_SIZE);
-            try {
-                infra = b.build(dc);
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                System.exit(1);
-            }
-            ((BasicIncludes) b.getIncludes()).add(infra);
-            int maxVMs = cfg.getAllNodes().size() * VMS_PER_SERVER;
-            int nbApps = 0;
-            int nbVMs = 0;
-            List<String> scriptsWithConstraints = new ArrayList<String>();
-            List<String> scriptsWoConstraints = new ArrayList<String>();
-            List<VJob> vjobs = new ArrayList<VJob>();
-
-            while (nbVMs < maxVMs) {
-                int size = generateAppSize(maxVMs - nbVMs);
-                if (maxVMs - nbVMs - size < MIN_APP_SIZE) {
-                    size += (maxVMs - nbVMs - size);
-                }
-
-                VirtualMachineTemplate[] tpls = generateTypes(b.getElementBuilder().getTemplates());
-                int[] distrib = generateSizing(size);
-                String scr1 = generateScript("clients.c" + nbApps, tpls[0], distrib[0], tpls[1], distrib[1], tpls[2], distrib[2], false, false);
-                String scr2 = generateScript("clients.c" + nbApps, tpls[0], distrib[0], tpls[1], distrib[1], tpls[2], distrib[2], true, isIsolated());
-
-                try {
-                    VJob v = b.build(scr2);
-                    vjobs.add(v);
-                    scriptsWoConstraints.add(scr1);
-                    scriptsWithConstraints.add(scr2);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    System.exit(1);
-                }
-                nbVMs += size;
-                nbApps++;
-            }
-
-            if (nbVMs != s * VMS_PER_SERVER) {
-                System.err.println(nbVMs + " VMs, expected " + (s * VMS_PER_SERVER));
-                System.exit(1);
-            }
-
-            Configuration dst = null;
-            VJob fencer = null;
-            List<ManagedElementSet<Node>> splits = split(cfg.getOnlines(), SWITCH_SIZE);
-            List<VJob> allVJobs = new ArrayList<VJob>();
-            allVJobs.addAll(vjobs);
-            fencer = generateFencer(vjobs, splits, SWITCH_SIZE);
-            allVJobs.add(fencer);
-            for (int i = 0; i < nbInstances; i++) {
-                if (i % 5 == 0) {
-                    VJobAlterer.setRandomCPUDemand(0.2, 0.9, vjobs);
-                    dst = Generator.generate(plan, cfg.getOnlines(), cfg.getOfflines(), allVJobs);
-                    VJobAlterer.setCPUConsumptionToDemand(vjobs);
-                }
-                ConfigurationAlterer.shuffle(dst, allVJobs, 100);
-
-                try {
-                    dumpHF(root + File.separator + "hf", dst, i, FAIL_RATIO);
-                    dumpLI(root + File.separator + "li", vjobs, dst, i, NB_INCR_APPS);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    System.exit(1);
-                }
-                System.out.println(i + "/" + nbInstances);
-            }
-
-            try {
-                //% of active constraints
-                dumpScripts(b, root + File.separator + "0pct", vjobs, scriptsWoConstraints, dc);
-                dumpScripts(b, root + File.separator + "33pct", vjobs, merge(scriptsWoConstraints, scriptsWithConstraints, 0.33), dc);
-                dumpScripts(b, root + File.separator + "66pct", vjobs, merge(scriptsWoConstraints, scriptsWithConstraints, 0.66), dc);
-                dumpScripts(b, root + File.separator + "100pct", vjobs, scriptsWithConstraints, dc);
-            } catch (Exception e) {
-                e.printStackTrace();
-                System.exit(1);
-            }
-        }
-    }
-
-    private static void generatePart(BtrPlaceVJobBuilder b, DurationEvaluator durations, String output, int nbInstances) {
-        generatePart(b, durations, output, VMS_PER_SERVER , nbInstances);
-    }
-    private static void generatePart(BtrPlaceVJobBuilder b, DurationEvaluator durations, String output, int ratio, int nbInstances) {
-
-        String root = output + File.separator + "part";
+        String root = output;
         ChocoLogging.setVerbosity(Verbosity.SILENT);
         SplitableVJobLauncher plan = new SplitableVJobLauncher(durations);
         plan.setPartitioningMode(SplitableVJobLauncher.PartitioningMode.sequential);
@@ -380,6 +275,7 @@ public class TDSC {
         int nbApps = 0;
         int nbVMs = 0;
         List<String> scriptsWithConstraints = new ArrayList<String>();
+        List<String> scriptsWoConstraints = new ArrayList<String>();
         List<VJob> vjobs = new ArrayList<VJob>();
 
         while (nbVMs < maxVMs) {
@@ -390,10 +286,12 @@ public class TDSC {
 
             VirtualMachineTemplate[] tpls = generateTypes(b.getElementBuilder().getTemplates());
             int[] distrib = generateSizing(size);
+            String scr1 = generateScript("clients.c" + nbApps, tpls[0], distrib[0], tpls[1], distrib[1], tpls[2], distrib[2], false, isIsolated());
             String scr2 = generateScript("clients.c" + nbApps, tpls[0], distrib[0], tpls[1], distrib[1], tpls[2], distrib[2], true, isIsolated());
             try {
                 VJob v = b.build(scr2);
                 vjobs.add(v);
+                scriptsWoConstraints.add(scr1);
                 scriptsWithConstraints.add(scr2);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -426,9 +324,10 @@ public class TDSC {
             System.out.println(i + "/" + nbInstances);
 
             try {
-                //TODO use or not ?
-                //dumpHF(root + File.separator + "hf", dst, i, FAIL_RATIO);
-                dumpLI(root + File.separator + "li", vjobs, dst, i, NB_INCR_APPS);
+                dumpHF(root + File.separator + "hf", dst, i, FAIL_RATIO);
+                if (!dumpLI(root + File.separator + "li", vjobs, dst, i, NB_INCR_APPS)) {
+                    i--;
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 System.exit(1);
@@ -437,7 +336,15 @@ public class TDSC {
 
         System.out.println("Storing files into '" + output + "'");
         try {
-            dumpPart(b, root + File.separator, vjobs, scriptsWithConstraints, fencer, splits, dc);
+            //% of active constraints
+            dumpScripts(b, root + File.separator + "c0", vjobs, scriptsWoConstraints, dc);
+            dumpScripts(b, root + File.separator + "c33", vjobs, merge(scriptsWoConstraints, scriptsWithConstraints, 0.33), dc);
+            dumpScripts(b, root + File.separator + "c66", vjobs, merge(scriptsWoConstraints, scriptsWithConstraints, 0.66), dc);
+            int[] parts = new int[]{250, 500, 1000, 2500, 5000};
+            for (int i = 0; i < parts.length; i++) {
+                dumpPart(b, root + File.separator + "c100p" + parts[i], vjobs, scriptsWithConstraints, fencer, splits, dc, parts[i]);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
@@ -557,18 +464,18 @@ public class TDSC {
         FileConfigurationSerializerFactory.getInstance().write(dst, output + File.separator + id + "-dst" + FileConfigurationSerializerFactory.PROTOBUF_EXTENSION);
     }
 
-    private static void dumpLI(String output, List<VJob> vjobs, Configuration cfg, int id, double ratio) throws IOException {
+    private static boolean dumpLI(String output, List<VJob> vjobs, Configuration cfg, int id, double ratio) throws IOException {
         setNonViable(vjobs, ratio);
         if (Configurations.futureOverloadedNodes(cfg).isEmpty()) {
             System.err.println("Error storing a viable configuration");
-            //System.exit(1);
-            return;
+            return false;
         }
         File root = new File(output);
         root.mkdirs();
         FileConfigurationSerializerFactory.getInstance().write(cfg, output + File.separator + id + "-src" + FileConfigurationSerializerFactory.PROTOBUF_EXTENSION);
         statistics(cfg);
         VJobAlterer.setCPUDemandToConsumption(vjobs);
+        return true;
     }
 
     private static void dumpScripts(VJobBuilder b, String output, List<VJob> vjobs, List<String> scripts, String infra) throws Exception {
@@ -626,51 +533,4 @@ public class TDSC {
     public static boolean isIsolated() {
         return rnd.nextInt(100) < 100 * LONELY_RATIO;
     }
-
-    public static void tryToSolve(DurationEvaluator ev, Configuration cfg, List<VJob> vjobs) {
-        FFDStyleVMAndHostAffinityAmongRP rp3 = new FFDStyleVMAndHostAffinityAmongRP(ev);
-        rp3.setRepairMode(true);
-
-        CustomizableSplitablePlannerModule rp4 = new CustomizableSplitablePlannerModule(ev);
-        rp4.setTimeLimit(3);
-        rp4.setRepairMode(true);
-        rp4.setPartitioningMode(CustomizableSplitablePlannerModule.PartitioningMode.none);
-
-        try {
-            ManagedElementSet<VirtualMachine> toRun = cfg.getRunnings().clone();
-            toRun.addAll(cfg.getWaitings());
-            TimedReconfigurationPlan p = rp3.compute(cfg,
-                    toRun,
-                    new SimpleManagedElementSet<VirtualMachine>(),
-                    cfg.getSleepings(),
-                    new SimpleManagedElementSet<VirtualMachine>(),
-                    cfg.getOnlines(),
-                    cfg.getOfflines(),
-                    vjobs
-            );
-            System.out.println("Heuristic: " + p.getActions().size() + " action(s) ");
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println(e.getMessage());
-        }
-
-        try {
-            ManagedElementSet<VirtualMachine> toRun = cfg.getRunnings().clone();
-            toRun.addAll(cfg.getWaitings());
-            TimedReconfigurationPlan p = rp4.compute(cfg,
-                    toRun,
-                    new SimpleManagedElementSet<VirtualMachine>(),
-                    cfg.getSleepings(),
-                    new SimpleManagedElementSet<VirtualMachine>(),
-                    cfg.getOnlines(),
-                    cfg.getOfflines(),
-                    vjobs
-            );
-            System.out.println("BtrPlace: " + p.getActions().size() + " action(s)");
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println(e.getMessage());
-        }
-    }
-
 }

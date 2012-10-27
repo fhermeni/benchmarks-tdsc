@@ -45,9 +45,6 @@ import entropy.vjob.VJob;
 import entropy.vjob.builder.DefaultVJobElementBuilder;
 import entropy.vjob.builder.VJobElementBuilder;
 import gnu.trove.THashSet;
-import microDSN.template.LargeEC2;
-import microDSN.template.SmallEC2;
-import microDSN.template.XLargeEC2;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -309,10 +306,6 @@ public class MicroBenchHandler {
 
     public static BtrPlaceVJobBuilder makeVJobBuilder() throws Exception {
         DefaultVirtualMachineTemplateFactory tplFactory = new DefaultVirtualMachineTemplateFactory();
-        tplFactory.add(new SmallEC2());
-        tplFactory.add(new LargeEC2());
-        tplFactory.add(new XLargeEC2());
-
         int[] cpu = {30, 40, 50, 60};
         int[] mem = {100, 200, 300};
         for (int c : cpu) {
