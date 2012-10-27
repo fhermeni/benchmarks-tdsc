@@ -73,7 +73,7 @@ public class TDSC {
     private final static int MIN_APP_SIZE = 6;
 
     private final static int MAX_APP_SIZE = 30;
-    private static final int VMS_PER_SERVER = 6;
+
     private static final int SWITCH_SIZE = 250;
 
     private static final int SERVER_UCPU = 200;
@@ -88,7 +88,7 @@ public class TDSC {
 
     private static final double NB_INCR_APPS = 0.1;
 
-    private static final int NB_INSTANCES = 50;
+    private static final int NB_INSTANCES = 5;
 
 
     public static void main(String[] args) {
@@ -104,7 +104,7 @@ public class TDSC {
             b.setIncludes(new BasicIncludes());
             int [] ratios = {3,4,5,6};
             for (int i  : ratios) {
-                generate(b, durations, "wkld" + File.separator + "r" + i, i, 5);
+                generate(b, durations, "wkld" + File.separator + "r" + i, i, NB_INSTANCES);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -127,7 +127,6 @@ public class TDSC {
                     out.close();
                 }
             }
-       // }
     }
 
     public static VirtualMachineTemplateFactory makeTemplateFactory() {
@@ -203,7 +202,7 @@ public class TDSC {
     /**
      * Change the demand to have a non-viable configuration
      *
-     * @param vjobs
+     * @param vjobs the vjobs to manipulate
      * @param ratio the ratio of vjobs that must have their demand increased by 30% (at most)
      */
     private static void setNonViable(List<VJob> vjobs, double ratio) {
@@ -218,13 +217,14 @@ public class TDSC {
         }
     }
 
-    private static void statistics(Configuration cfg) {
-        System.out.print("[uCPU]");
-        System.out.println(" usage: " + (100 * ConfigurationAlterer.getCPUConsumptionLoad(cfg)) + "%" +
-                " demand: " + (100 * ConfigurationAlterer.getCPUDemandLoad(cfg)) + "%\n" +
-                "[Memory] usage: " + (100 * ConfigurationAlterer.getMemoryConsumptionLoad(cfg)) + "%");
+    private static String statistics(Configuration cfg) {
+        StringBuilder b = new StringBuilder();
+        b.append("uCPU: ");
+        b.append(100 * ConfigurationAlterer.getCPUConsumptionLoad(cfg) + "% ->" +
+                (100 * ConfigurationAlterer.getCPUDemandLoad(cfg)) + "%  " +
+                "mem: " + (100 * ConfigurationAlterer.getMemoryConsumptionLoad(cfg)) + "%");
+        return b.toString();
     }
-
 
     private static List<ManagedElementSet<Node>> split(ManagedElementSet<Node> all, int splitSize) {
         List<ManagedElementSet<Node>> splits = new ArrayList<ManagedElementSet<Node>>();
@@ -255,7 +255,7 @@ public class TDSC {
     }
 
     private static void generate(BtrPlaceVJobBuilder b, DurationEvaluator durations, String output, int ratio, int nbInstances) {
-
+        System.out.println(nbInstances + " RP(s) with a consolidation ratio of " + ratio + ":1 ...");
         String root = output;
         ChocoLogging.setVerbosity(Verbosity.SILENT);
         SplitableVJobLauncher plan = new SplitableVJobLauncher(durations);
@@ -321,25 +321,31 @@ public class TDSC {
                 VJobAlterer.setCPUConsumptionToDemand(vjobs);
             }
             ConfigurationAlterer.shuffle(dst, allVJobs, 100);
-            System.out.println(i + "/" + nbInstances);
+            System.out.print("RP " + i + "/" + nbInstances);
 
             try {
-                dumpHF(root + File.separator + "hf", dst, i, FAIL_RATIO);
-                if (!dumpLI(root + File.separator + "li", vjobs, dst, i, NB_INCR_APPS)) {
+                dumpHF(root + File.separator + "nr", dst, i, FAIL_RATIO);
+                System.out.print(" NR");
+                Configuration x = dumpLI(root + File.separator + "li", vjobs, dst, i, NB_INCR_APPS);
+                if (x == null) {
+                    System.out.println(" !LI -> retry");
                     i--;
+                } else {
+                    System.out.println(" LI (" + statistics(x) + ")");
                 }
+
             } catch (Exception e) {
                 e.printStackTrace();
                 System.exit(1);
             }
         }
 
-        System.out.println("Storing files into '" + output + "'");
+        System.out.println("Writing the scripts");
         try {
             //% of active constraints
-            dumpScripts(b, root + File.separator + "c0", vjobs, scriptsWoConstraints, dc);
-            dumpScripts(b, root + File.separator + "c33", vjobs, merge(scriptsWoConstraints, scriptsWithConstraints, 0.33), dc);
-            dumpScripts(b, root + File.separator + "c66", vjobs, merge(scriptsWoConstraints, scriptsWithConstraints, 0.66), dc);
+            dumpScripts(b, root + File.separator + "c0p" + NB_SERVERS, vjobs, scriptsWoConstraints, dc);
+            dumpScripts(b, root + File.separator + "c33p" + NB_SERVERS, vjobs, merge(scriptsWoConstraints, scriptsWithConstraints, 0.33), dc);
+            dumpScripts(b, root + File.separator + "c66p" + NB_SERVERS, vjobs, merge(scriptsWoConstraints, scriptsWithConstraints, 0.66), dc);
             int[] parts = new int[]{250, 500, 1000, 2500, 5000};
             for (int i = 0; i < parts.length; i++) {
                 dumpPart(b, root + File.separator + "c100p" + parts[i], vjobs, scriptsWithConstraints, fencer, splits, dc, parts[i]);
@@ -464,18 +470,16 @@ public class TDSC {
         FileConfigurationSerializerFactory.getInstance().write(dst, output + File.separator + id + "-dst" + FileConfigurationSerializerFactory.PROTOBUF_EXTENSION);
     }
 
-    private static boolean dumpLI(String output, List<VJob> vjobs, Configuration cfg, int id, double ratio) throws IOException {
+    private static Configuration dumpLI(String output, List<VJob> vjobs, Configuration cfg, int id, double ratio) throws IOException {
         setNonViable(vjobs, ratio);
         if (Configurations.futureOverloadedNodes(cfg).isEmpty()) {
-            System.err.println("Error storing a viable configuration");
-            return false;
+            return null;
         }
         File root = new File(output);
         root.mkdirs();
         FileConfigurationSerializerFactory.getInstance().write(cfg, output + File.separator + id + "-src" + FileConfigurationSerializerFactory.PROTOBUF_EXTENSION);
-        statistics(cfg);
         VJobAlterer.setCPUDemandToConsumption(vjobs);
-        return true;
+        return cfg;
     }
 
     private static void dumpScripts(VJobBuilder b, String output, List<VJob> vjobs, List<String> scripts, String infra) throws Exception {
