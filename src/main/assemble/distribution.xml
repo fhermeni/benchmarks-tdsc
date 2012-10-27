@@ -30,8 +30,8 @@
     </dependencySets>
     <fileSets>
         <fileSet>
-            <outputDirectory>/config</outputDirectory>
-            <directory>config</directory>
+            <outputDirectory>/</outputDirectory>
+            <directory>src/main/config</directory>
         </fileSet>
         <fileSet>
             <includes>
