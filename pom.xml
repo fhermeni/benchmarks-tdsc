@@ -10,7 +10,7 @@
     <packaging>jar</packaging>
     <description>
         Micro benchmarks. It includes an instances generator, a master/slave application to execute the instances,
-        tools to extract the results and some managemebt scripts for Grid'5000.
+        tools to extract the results and some management scripts for Grid'5000.
     </description>
     <developers>
         <developer>
@@ -49,18 +49,6 @@
         </dependency>
 
     </dependencies>
-
-    <scm>
-        <connection>
-            scm:svn:svn://scm.gforge.inria.fr/svn/entropy/trunk/microsDSN
-        </connection>
-        <developerConnection>
-            scm:svn:https://scm.gforge.inria.fr/svn/entropy/trunk/microsDSN
-        </developerConnection>
-        <url>
-            https://gforge.inria.fr/plugins/scmsvn/viewcvs.php/trunk/microsDSN?root=entropy
-        </url>
-    </scm>
 
     <build>
         <extensions>
@@ -103,25 +91,22 @@
         </plugins>
     </build>
 
+
     <distributionManagement>
         <repository>
             <uniqueVersion>false</uniqueVersion>
-            <id>gforge.inria.fr</id>
+            <id>btrp</id>
             <name>Corporate Repository</name>
             <url>
-                scpexe://scm.gforge.inria.fr:/home/groups/entropy/htdocs/repos/releases
+                scpexe://btrp.inria.fr:/home/maven/repos/releases
             </url>
             <layout>default</layout>
         </repository>
-        <snapshotRepository>
-            <uniqueVersion>false</uniqueVersion>
-            <id>gforge.inria.fr</id>
-            <name>Corporate Repository</name>
-            <url>
-                scpexe://scm.gforge.inria.fr:/home/groups/entropy/htdocs/repos/snapshots
-            </url>
-            <layout>default</layout>
-        </snapshotRepository>
     </distributionManagement>
 
+    <scm>
+        <connection>scm:git:git@github.com:fhermeni/benchmarks-tdsc.git</connection>
+        <url>scm:git:git@github.com:fhermeni/benchmarks-tdsc</url>
+        <developerConnection>scm:git:git@github.com:fhermeni/benchmarks-tdsc.git</developerConnection>
+    </scm>
 </project>
