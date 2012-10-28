@@ -90,7 +90,7 @@ public class TDSC {
 
     private static final double NB_INCR_APPS = 0.1;
 
-    private static final int NB_INSTANCES = 5;
+    private static final int NB_INSTANCES = 50;
 
 
     public static void main(String[] args) {
@@ -106,7 +106,7 @@ public class TDSC {
             b.setIncludes(new BasicIncludes());
             int [] ratios = {3,4,5,6};
             for (int i  : ratios) {
-                generate(b, durations, "wkld" + File.separator + "r" + i, i, NB_INSTANCES);
+                generate(b, durations, "wkld-tdsc" + File.separator + "r" + i, i, NB_INSTANCES);
             }
         } catch (Exception e) {
             e.printStackTrace();
