@@ -27,11 +27,10 @@ The script `dispatcher.sh` is available to spread the RPs in a workload among sl
 is used by the slave to process the workload. Launch them directly to get the options.
 
 If this benchmark is run on the Grid'5000 platform, the scripts `g5k-*` can be used on a master node to process
-the workload automatically. The following command run the benchmark related to the filter optimization. It uses
-the workload inside `wkld-tdsc` and stores the result inside the folder `output`. The other benchmarks are _constraints_,
-_parts_, _availability_.
+the workload automatically. The following command run all the benchmarks. It uses
+the workload inside `wkld-tdsc` and stores the result inside the folder `output`.
 
-   $ ./bench-g5k.sh filter wkld-tdsc output
+   $ ./g5k-bench-all.sh  wkld-tdsc output
 
 Exploiting the benchmarks
 -------------------------
