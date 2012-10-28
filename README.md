@@ -28,8 +28,8 @@ is used by the slave to process the workload. Launch them directly to get the op
 
 By default, the benchmarks is made for being used over the Grid'5000 platform. The script that is dedicated to
 that is `g5k-process.sh`. It is used by the `bench-*` scripts. To adapt the execution to another environment,
-create a script similar to `g5k-process.sh` and declare it into `bench-ratio-single.sh`. `standalone-process.sh`
-can be used to process the workload on a single node
+create a script similar to `g5k-process.sh` and declare it into `bench-ratio-single.sh`. `local-process.sh`
+can be used to process the workload on a single node.
 
 The following command run all the benchmarks. It uses
 the workload inside `wkld-tdsc` and stores the result inside the folder `output`.

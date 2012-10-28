@@ -19,6 +19,7 @@
 
 package microDSN;
 
+import ch.qos.logback.classic.BasicConfigurator;
 import entropy.jobsManager.CommitedJobHandler;
 import entropy.jobsManager.Job;
 import entropy.jobsManager.JobDispatcher;
