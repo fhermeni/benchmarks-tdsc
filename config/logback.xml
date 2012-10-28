@@ -17,7 +17,7 @@
   ~        along with Entropy.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<configuration scan="true">
+<configuration scan="false">
 
     <appender name="console-debug" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 PORT=8080
-MASTER=`hostname -s`
+MASTER="127.0.0.1"
 prg=`dirname $0`
 ROOT=`pwd`
 
@@ -42,19 +42,16 @@ if [ -d ${OUTPUT} ]; then
     GOOD=0;
 fi
 
-if [ ! ${GOOD} ]; then
+if [ ${GOOD} -eq 0 ]; then
     rm -rf ${WORKERS}
     exit 1
 fi
 
 $prg/dispatcher.sh -p $PORT -cfgs ${SET} -vjobs ${VJOBS} -props ${PROP} -o ${OUTPUT} &
 echo "Dispatcher launched"
-sleep 5
 echo "Starting workers"
 ./handler.sh -s $MASTER:$PORT 2>&1 >> log.txt
 echo "Workers are terminated"
-sleep 5
 echo "Cleaning"
 killall java 2>&1 > /dev/null
-
 exit 0
