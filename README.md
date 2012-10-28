@@ -26,11 +26,15 @@ The workload used by the paper is available at this [address](http://btrp.inria.
 The script `dispatcher.sh` is available to spread the RPs in a workload among slaves while the script `handler.sh`
 is used by the slave to process the workload. Launch them directly to get the options.
 
-If this benchmark is run on the Grid'5000 platform, the scripts `g5k-*` can be used on a master node to process
-the workload automatically. The following command run all the benchmarks. It uses
+By default, the benchmarks is made for being used over the Grid'5000 platform. The script that is dedicated to
+that is `g5k-process.sh`. It is used by the `bench-*` scripts. To adapt the execution to another environment,
+create a script similar to `g5k-process.sh` and declare it into `bench-ratio-single.sh`. `standalone-process.sh`
+can be used to process the workload on a single node
+
+The following command run all the benchmarks. It uses
 the workload inside `wkld-tdsc` and stores the result inside the folder `output`.
 
-   $ ./g5k-bench-all.sh  wkld-tdsc output
+   $ ./bench-all.sh  wkld-tdsc output
 
 Exploiting the benchmarks
 -------------------------
