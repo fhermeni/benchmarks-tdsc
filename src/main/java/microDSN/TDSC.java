@@ -57,10 +57,12 @@ import java.io.PrintWriter;
 import java.util.*;
 
 /**
+ * Workload generator for TDSC.
  * @author Fabien Hermenier
  */
 public class TDSC {
 
+    //Duration of actions.
     private final static int apacheBoot = 4;
     private final static int apacheHalt = 5;
     private final static int tomcatBoot = 9;

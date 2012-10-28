@@ -26,7 +26,7 @@ The workload used by the paper is available at this [address](http://btrp.inria.
 The script `dispatcher.sh` is available to spread the RPs in a workload among slaves while the script `handler.sh`
 is used by the slave to process the workload. Launch them directly to get the options.
 
-If this benchmark is run on the Grid'5000 platform, the script `bench-g5k.sh` can be used on a master node to process
+If this benchmark is run on the Grid'5000 platform, the scripts `g5k-*` can be used on a master node to process
 the workload automatically. The following command run the benchmark related to the filter optimization. It uses
 the workload inside `wkld-tdsc` and stores the result inside the folder `output`. The other benchmarks are _constraints_,
 _parts_, _availability_.
