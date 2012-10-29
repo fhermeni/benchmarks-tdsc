@@ -2,7 +2,7 @@
 #Script to reformat the results before generating the graphs.
 EXE="./reformat.pl"
 TICS="15,20,25,30"
-RATIOS="3 4 5"
+RATIOS="3 4 5 6"
 if [ $# -ne 2 ]; then
     echo "Usage: $0 raw summed"
     echo "raw: directory containing the benchmarks result"
