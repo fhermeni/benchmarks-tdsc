@@ -26,5 +26,5 @@ minor.tick(nx=1, ny=2, tick.ratio=0.5)
 title(,ylab="Time (sec)")
 mtext("Virtual machines (per 1,000)",line=-9.5);
 
-legend("bottom",c("33%","66%","100%"),col=colors,lwd=lwds,bty="n",pch=pchs,horiz=TRUE)
+legend("topleft",c("33%","66%","100%"),col=colors,lwd=lwds,bty="n",pch=pchs,horiz=TRUE)
 dev.off()

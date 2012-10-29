@@ -10,7 +10,6 @@ in=$1
 out=$2
 
 mkdir -p $out > /dev/null
-./R/filter-duration.R $in $out
-./R/NR-cstr-duration.R $in $out
-./R/LI-cstr-duration.R $in $out
-./R/part-duration.R $in $out
+for r in filter-duration filter-actions NR-cstr-duration LI-cstr-duration part-duration availability solveImpact; do
+    ./R/$r.R $in $out
+done

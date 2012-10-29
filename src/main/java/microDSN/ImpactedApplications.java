@@ -18,9 +18,10 @@ import java.util.*;
 public class ImpactedApplications {
 
     public static void main(String [] args) {
-        File vJobsPath = new File("./tdsc-10/part/part5000");
+        String base ="./wkld-tdsc/r3";
+        File vJobsPath = new File(base + "/c100p5000");
         File clientPath = new File(vJobsPath.getPath() + "/clients");
-        File configPath = new File("./tdsc-10/part/li");
+        File configPath = new File(base + "/li");
 
         List<Configuration> configs = null;
 
