@@ -1,13 +1,18 @@
 #!/usr/bin/Rscript
 
-pdf('part-duration.pdf', height=3, width=5)
+args <- commandArgs(TRUE);
+input <- args[1];
+output <- args[2];
+
+pdf(paste(output,'/partitions-duration.pdf',sep=""), height=3, width=5);
+
+
 # Trim off excess margin space (bottom, left, top, right)
 par(mar=c(3.1, 3.9, 0.2, 0.5),ps=16,mgp=c(2.3,0.6,0))
 
-apply <- read.table("data/parts-apply.data",sep='\t',header=T)
-dur <- read.table("data/parts-duration.data",sep='\t',header=T)
+dur <- read.table(paste(input,"/partitions-duration.data",sep=""),sep='\t',header=T)
 
-sizes <- apply[,1];
+sizes <- dur[,1];
 plot(1,type="n",axes=F,xlab="",ylab="",xlim=c(0,5000),ylim=c(0,150))
 
 pchs <- c(4,3);

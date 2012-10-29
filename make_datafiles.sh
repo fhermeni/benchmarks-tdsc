@@ -36,7 +36,7 @@ for set in li nr; do
 	done
     done
 done
-echo $DATA
+
 $EXE solvDuration+generation -xtics VMs $TICS $DATA > $OUT/constraints-duration.data
 $EXE apply -xtics VMs $TICS $DATA > $OUT/constraints-apply.data
 $EXE nbStarts+nbRelocations+nbMigrations -xtics VMS $TICS $DATA > $OUT/constraints-actions.data

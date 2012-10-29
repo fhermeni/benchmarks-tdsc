@@ -1,34 +1,34 @@
 #!/usr/bin/Rscript
 require(Hmisc);
-pdf('LI-cstrs-dur.pdf', height=2, width=5)
+args <- commandArgs(TRUE);
+input <- args[1];
+output <- args[2];
+pdf(paste(output,'/LI-cstrs-dur.pdf',sep=""), height=2, width=5)
 # Trim off excess margin space (bottom, left, top, right)
 par(mar=c(3.1, 3.9, 0.2, 0.5),ps=15,mgp=c(2.5,0.6,0))
 
-dur <- read.table("data/constraints-duration.data",sep='\t',header=T)
+dur <- read.table(paste(input,"/constraints-duration.data",sep=""),sep='\t',header=T)
 
 sizes <- dur[,1];
-plot(1,type="n",axes=F,xlim=c(15,30),ylim=c(-30,10),xlab="",ylab="",tck=0.2)
+plot(1,type="n",axes=F,xlim=c(15,30),ylim=c(-20,15),xlab="",ylab="",tck=0.2)
 abline(h=0,col="black",lty=2,lwd=1)
 
 
 pchs <- c(1,2,3)
 colors = gray(seq(0.8,0.0,length=3));
 lwds <- c(3,3,3)
-
+print(dur);
 for (i in 3:5) {
-    print(i);
-#    print(dur[,i]);
-#    print(dur[,2]);
+    lines(sizes, dur[,i] - dur[,2], lwd=lwds[i-2], type="o", pch=pchs[i-2], col=colors[i-2]);
     print(dur[,i] - dur[,2]);
-    lines(sizes, dur[,i] - dur[,2], lwd=lwds[i-2], type="o", pch=pchs[i-2], col=colors[i-1])
 }
 
 title(ylab="Time (sec)")
 mtext("Virtual machines (per 1,000)",line=-9.5);
 
 axis(1,seq(15,30,by=5))
-axis(2,seq(-30,15,by=10),las=1)
-minor.tick(nx=1, ny=2, tick.ratio=0.5)
+axis(2,seq(-20,15,by=15),las=1)
+minor.tick(nx=1, ny=1, tick.ratio=0.5)
 
 legend("bottomleft",c("33%","66%","100%"),col=colors,lwd=lwds,bty="n",pch=pchs,horiz=TRUE)
 dev.off()

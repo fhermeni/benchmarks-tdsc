@@ -139,11 +139,9 @@ public class MicroBenchHandler {
             Configuration src = FileConfigurationSerializerFactory.getInstance().read(srcP);
             Configuration dst = FileConfigurationSerializerFactory.getInstance().read(dstP);
             configs.add(new Configuration[]{src, dst});
-//            System.err.println("Here:" + src.getAllVirtualMachines().size() + " " + dst.getAllVirtualMachines().size());
         }
 
         vjobs = getVJobs(configs.get(0)[0], new File(vPath), listFiles(vPath, true));
-//        System.err.println("After:" + configs.get(0)[0].getAllVirtualMachines().size() + " " + configs.get(0)[1].getAllVirtualMachines().size());
         PrintWriter out = null;
         try {
             if (output != null) {
@@ -157,7 +155,6 @@ public class MicroBenchHandler {
                     out.println(res.toRaw());
                 } else {
                     System.out.println(res.toString());
-                    //System.out.println(res.plan.toString());
                 }
             }
         } finally {
@@ -216,7 +213,6 @@ public class MicroBenchHandler {
             Plan.logger.debug("vjobs incl= " + incl.getPath() + " size=" + vjobs.size());
 
             BenchResult res = bench(src, dst, vjobs, props);
-            System.err.println(res.toString());
             res.id = Integer.toString(j.getId());
             PlanJob.setMetrics(j, res.toRaw());
             File fout = File.createTempFile("foo", "bar");

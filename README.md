@@ -20,7 +20,7 @@ Running the benchmarks
 ----------------------
 
 You must first get a workload and uncompress it into the benchmark folder.
-The workload used by the paper is available at this [address](http://btrp.inria.fr/tdsc/workload.tar.bz2).
+The workload used by the paper is available at this [address](https://github.com/downloads/fhermeni/benchmarks-tdsc/wkld-tdsc.tar.bz2).
 
 
 The script `dispatcher.sh` is available to spread the RPs in a workload among slaves while the script `handler.sh`
