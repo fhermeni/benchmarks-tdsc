@@ -19,8 +19,8 @@ pchs <- c(4,3);
 
 colors = gray(c(0.2,0.6));
 
-    lines(sizes, dur[,2], lwd=5, type="o", pch=pchs[2], col=colors[2])
-    lines(sizes, dur[,3], lwd=5, type="o", pch=pchs[1], col=colors[1])
+    lines(sizes, dur[,9], lwd=5, type="o", pch=pchs[2], col=colors[2])
+    lines(sizes, dur[,8], lwd=5, type="o", pch=pchs[1], col=colors[1])
 
 axis(1,seq(0,5000,by=1000))
 axis(2,seq(0,150,by=30),las=1)

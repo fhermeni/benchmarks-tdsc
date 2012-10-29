@@ -43,14 +43,14 @@ $EXE nbStarts+nbRelocations+nbMigrations -xtics VMS $TICS $DATA > $OUT/constrain
 
 #Partitions
 DATA=""
+for r in $RATIOS; do
 for set in li nr; do
+    DATA="$DATA -d $set-r${r}" #The axis label
     for part in 5000 2500 1000 500 250; do
-	DATA="$DATA -d $set-$part" #The axis label
-	for r in $RATIOS; do #The datas
-	    DATA="$DATA $IN/r${r}c100p$part-$set"
-	done
+	DATA="$DATA $IN/r${r}c100p$part-$set"
     done
 done
+done
+$EXE solvDuration+generation -xtics Part 5000,2500,1000,500,250 $TICS $DATA > $OUT/partitions-duration.data
+$EXE apply -xtics Part 5000,2500,1000,500,250 $DATA > $OUT/partitions-apply.data
 
-$EXE solvDuration+generation -xtics VMs $TICS $DATA > $OUT/partitions-duration.data
-$EXE apply -xtics VMs $TICS $DATA > $OUT/partitions-apply.data
