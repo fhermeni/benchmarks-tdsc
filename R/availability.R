@@ -24,22 +24,19 @@ MTBF = 3600; #60 minutes = 3600 seconds
 #R4 avg. impacted apps: 67.72/1116 = 6.068100358422939%
 #R3 avg. impacted apps: 12.38/852 = 1.4530516431924883%
 
-#impact <- c(1,2,3,4);#c(0.567,0.234,0.061,0.0145);   
-#print(MTTR);
-#av <- MTBF / (MTBF + MTTR) * 100;
-#print(av);
+
+#These coefficient denotes the % of applications impacted
+#by the load increase
 MTTR[,1]<-MTTR[,1] * 0.0145;
 MTTR[,2]<-MTTR[,2] * 0.061;
 MTTR[,3]<-MTTR[,3] * 0.234;
 MTTR[,4]<-MTTR[,4] * 0.567;
 
-#print(MTTR);
 av <- MTBF / (MTBF + MTTR) * 100;
 
 
 partSize <- c(250,500,1000,2500,5000);
 consRatio <- c(15,20,25,30);
-print(av[inv,]);	  
 
 filled.contour(partSize,consRatio,av[inv,],
       xlim=c(250,5000),ylim=c(15,30),zlim=c(99,100),

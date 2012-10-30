@@ -90,13 +90,14 @@ public class TDSC {
 
     private static final double NB_INCR_APPS = 0.1;
 
-    private static final int NB_INSTANCES = 2;
-
-
     public static void main(String[] args) {
         DurationEvaluator durations = new MockDurationEvaluator(1, 2, 3, 4, 5, 6, 7, 8, 9);
-        ChocoLogging.setVerbosity(Verbosity.SOLUTION);
+        ChocoLogging.setVerbosity(Verbosity.SILENT);
 
+        if (args.length != 2) {
+            System.out.println("Expected arguments: nb output\nnb: the number of instances\noutput: the output directory");
+            System.exit(1);
+        }
         try {
 
             VirtualMachineTemplateFactory tplFactory = makeTemplateFactory();
@@ -106,7 +107,7 @@ public class TDSC {
             b.setIncludes(new BasicIncludes());
             int [] ratios = {3,4,5,6};
             for (int i  : ratios) {
-                generate(b, durations, "wkld-simple" + File.separator + "r" + i, i, NB_INSTANCES);
+                generate(b, durations, args[1] + File.separator + "r" + i, i, Integer.parseInt(args[0]));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -222,9 +223,9 @@ public class TDSC {
     private static String statistics(Configuration cfg) {
         StringBuilder b = new StringBuilder();
         b.append("uCPU: ");
-        b.append(100 * ConfigurationAlterer.getCPUConsumptionLoad(cfg) + "% ->" +
-                (100 * ConfigurationAlterer.getCPUDemandLoad(cfg)) + "%  " +
-                "mem: " + (100 * ConfigurationAlterer.getMemoryConsumptionLoad(cfg)) + "%");
+        b.append(100 * ConfigurationAlterer.getCPUConsumptionLoad(cfg)).append("% ->")
+                .append(100 * ConfigurationAlterer.getCPUDemandLoad(cfg)).append("%  ")
+                .append("mem: ").append(100 * ConfigurationAlterer.getMemoryConsumptionLoad(cfg)).append("%");
         return b.toString();
     }
 
@@ -245,7 +246,7 @@ public class TDSC {
         return splits;
     }
 
-    private static VJob generateFencer(List<VJob> vjobs, List<ManagedElementSet<Node>> splits, int fenceSize) {
+    private static VJob generateFencer(List<VJob> vjobs, List<ManagedElementSet<Node>> splits) {
         VJob fencer = new DefaultVJob("fencer");
         int i = 0;
         for (VJob v : vjobs) {
@@ -256,10 +257,8 @@ public class TDSC {
         return fencer;
     }
 
-    private static void generate(BtrPlaceVJobBuilder b, DurationEvaluator durations, String output, int ratio, int nbInstances) {
+    private static void generate(BtrPlaceVJobBuilder b, DurationEvaluator durations, String root, int ratio, int nbInstances) {
         System.out.println(nbInstances + " RP(s) with a consolidation ratio of " + ratio + ":1 ...");
-        String root = output;
-        ChocoLogging.setVerbosity(Verbosity.SILENT);
         SplitableVJobLauncher plan = new SplitableVJobLauncher(durations);
         plan.setPartitioningMode(SplitableVJobLauncher.PartitioningMode.sequential);
         Configuration cfg = createInfra(NB_SERVERS, NB_CPUS, SERVER_UCPU, SERVER_MEM);
@@ -309,11 +308,11 @@ public class TDSC {
             System.exit(1);
         }
         Configuration dst = null;
-        VJob fencer = null;
+
         List<ManagedElementSet<Node>> splits = split(cfg.getOnlines(), SWITCH_SIZE);
         List<VJob> allVJobs = new ArrayList<VJob>();
         allVJobs.addAll(vjobs);
-        fencer = generateFencer(vjobs, splits, SWITCH_SIZE);
+        VJob fencer = generateFencer(vjobs, splits);
         allVJobs.add(fencer);
         for (int i = 0; i < nbInstances; i++) {
             if (i % 5 == 0) {
@@ -349,8 +348,8 @@ public class TDSC {
             dumpScripts(b, root + File.separator + "c33p" + NB_SERVERS, vjobs, merge(scriptsWoConstraints, scriptsWithConstraints, 0.33), dc);
             dumpScripts(b, root + File.separator + "c66p" + NB_SERVERS, vjobs, merge(scriptsWoConstraints, scriptsWithConstraints, 0.66), dc);
             int[] parts = new int[]{250, 500, 1000, 2500, 5000};
-            for (int i = 0; i < parts.length; i++) {
-                dumpPart(b, root + File.separator + "c100p" + parts[i], vjobs, scriptsWithConstraints, fencer, splits, dc, parts[i]);
+            for (int i : parts) {
+                dumpPart(b, root + File.separator + "c100p" + i, vjobs, scriptsWithConstraints, fencer, splits, dc, i);
             }
 
         } catch (Exception e) {
@@ -406,7 +405,7 @@ public class TDSC {
         StringBuilder b = new StringBuilder("{");
         for (Iterator<Node> ite = s.iterator(); ite.hasNext(); ) {
             ManagedElement e = ite.next();
-            b.append("@" + e.getName());
+            b.append("@").append(e.getName());
             if (ite.hasNext()) {
                 b.append(", ");
             }

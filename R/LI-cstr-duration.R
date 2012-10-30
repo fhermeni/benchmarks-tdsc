@@ -17,10 +17,9 @@ abline(h=0,col="black",lty=2,lwd=1)
 pchs <- c(1,2,3)
 colors = gray(seq(0.8,0.0,length=3));
 lwds <- c(3,3,3)
-print(dur);
 for (i in 3:5) {
     lines(sizes, dur[,i] - dur[,2], lwd=lwds[i-2], type="o", pch=pchs[i-2], col=colors[i-2]);
-    print(dur[,i] - dur[,2]);
+
 }
 
 title(ylab="Time (sec)")

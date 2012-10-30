@@ -8,7 +8,7 @@ apply <- read.table("data/nbParts.data",header=F)
 
 sizes <- apply[,1];
 dur <- apply[,2] / 1000;
-print(apply)
+
 plot(sizes,dur, axes=F,xlab="",ylab="Time (sec)",xlim=c(0,28),ylim=c(0,50),type="o",lwd=5)
 
 axis(1,seq(0,28,by=4))
