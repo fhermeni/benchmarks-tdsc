@@ -23,7 +23,7 @@ for (i in 3:5) {
 }
 
 title(ylab="Time (sec)")
-mtext("Virtual machines (per 1,000)",line=-9.5);
+mtext("Virtual machines (x 1,000)",line=-9.5);
 
 axis(1,seq(15,30,by=5))
 axis(2,seq(-20,15,by=15),las=1)

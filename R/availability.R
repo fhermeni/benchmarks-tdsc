@@ -7,7 +7,7 @@ pdf(paste(output,'/availability.pdf',sep=""), height=3, width=5);
 
 
 # Trim off excess margin space (bottom, left, top, right)
-par(mar=c(3, 3, 0.5, 0.5),ps=12,mgp=c(1.8,0.6,0))
+par(mar=c(3, 3, 0.5, 0.5),ps=14,mgp=c(1.8,0.6,0))
 dur <- read.table(paste(input,"/partitions-duration.data",sep=""),sep='\t',header=T)
 apply <- read.table(paste(input,"/partitions-apply.data",sep=""),sep='\t',header=T)
 
@@ -37,17 +37,20 @@ av <- MTBF / (MTBF + MTTR) * 100;
 
 partSize <- c(250,500,1000,2500,5000);
 consRatio <- c(15,20,25,30);
-
+#colors <-c("black","gray","blue","yellow","red","orange","green","brown","violet","gray");
+#colors <- palette( rev(rich.colors(10)) );
+colors <- c("gray20","gray25","gray30","gray35","gray40","gray50","gray60","gray70","gray80","gray90");
 filled.contour(partSize,consRatio,av[inv,],
       xlim=c(250,5000),ylim=c(15,30),zlim=c(99,100),
-      xlab="",ylab="Virtual machines (per 1,000)",
+      xlab="",ylab="Virtual machines (x 1,000)",
       plot.axes = {axis(1,partSize)	
                    axis(2,consRatio,las=1)},
-     col=gray(seq(1,0.1,length=10)),
-     nlevels=10
-
+     col=colors,
+#     col=gray(seq(0.8,0.2,length=10)),
+     nlevels=10,
 );
 
-mtext("Partition size (servers)",line=-14);
+mtext("Partition size (servers)                          ",line=-14);
+mtext("Availability (%)",side=4,line=-6);
 
 dev.off()

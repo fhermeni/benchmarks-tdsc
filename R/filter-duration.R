@@ -12,7 +12,7 @@ par(mar=c(2.8, 4.2, 0.2, 0.2),ps=14,mgp=c(1.6,0.6,0))
 durRepair <- read.table(paste(input,"/filter-duration.data",sep=""),sep='\t',header=T)
 durRebuild <- read.table(paste(input,"/wofilter-duration.data", sep=""), sep='\t', header=T)
 
-applyRepair <- rfead.table(paste(input,"/filter-apply.data",sep=""), sep='\t',header=T)
+applyRepair <- read.table(paste(input,"/filter-apply.data",sep=""), sep='\t',header=T)
 applyRebuild <- read.table(paste(input,"/wofilter-apply.data",sep=""), sep='\t', header=T)
 
 sizes <- durRepair[,1];
@@ -33,7 +33,7 @@ lines(sizes, t(durRepair[,3] + applyRepair[,3]), lwd=lwds[4], type="o", pch=pchs
 axis(1,seq(15,30,by=5))
 axis(2,seq(0,310,by=60),las=1)
 
-title(xlab="Virtual machines (per 1,000)",ylab="Time (sec)\n")
+title(xlab="Virtual machines (x 1,000)",ylab="Time (sec)");
 
 legend("topright",c("LI","NR","LI-filter","NR-filter"),col=colors,lwd=lwds,bty="n",pch=pchs)
 dev.off()

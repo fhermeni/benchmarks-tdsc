@@ -30,7 +30,7 @@ axis(1,seq(15,30,by=5))
 axis(2,seq(0,1500,by=250),las=1)
 
 title(ylab="Actions")
-mtext("Virtual machines (per 1,000)",line=-14.5);
+mtext("Virtual machines (x 1,000)",line=-14.5);
 
-legend("right",c("LI","NR","LI-filter","NR-filter"),col=colors,lwd=lwds,bty="n",pch=pchs)
+legend(x=25,y=1200,c("LI","NR","LI-filter","NR-filter"),col=colors,lwd=lwds,bty="n",pch=pchs)
 dev.off()
