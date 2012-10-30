@@ -66,8 +66,14 @@ then run the following command:
 Additional tools
 ------------------------
 
-* to generate a workload, use `generate.sh`
-* to compute the number of applications impacted by a load increase in a given workload, use `impacted.sh`
+* to generate a workload, use `generate.sh`:
+
+    $ ./generate.sh 10 simple_workload
+
+* to compute the number of applications impacted by a load increase in a given workload, use `impacted.sh`:
+
+    $ ./impacted.sh simple_workload/r3 c100p5000
+
 
 
 

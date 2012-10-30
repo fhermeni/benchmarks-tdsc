@@ -18,8 +18,18 @@ import java.util.*;
 public class ImpactedApplications {
 
     public static void main(String [] args) {
-        String base ="./wkld-tdsc/r3";
-        File vJobsPath = new File(base + "/c100p5000");
+
+        if (args.length != 2) {
+            System.out.println("Usage: ImpactedApplications root vjobs");
+            System.out.println("root: the root directory of a given consolidation ratio ");
+            System.out.println("vjobs: the path to the associated vjobs inside root");
+            System.exit(1);
+        }
+        String base = args[0];
+        String vj = args[1];
+
+        //String base ="./wkld-tdsc/r3";
+        File vJobsPath = new File(base + File.separator + vj);
         File clientPath = new File(vJobsPath.getPath() + "/clients");
         File configPath = new File(base + "/li");
 
