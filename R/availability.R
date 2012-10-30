@@ -46,18 +46,10 @@ filled.contour(partSize,consRatio,av[inv,],
       xlab="",ylab="Virtual machines (per 1,000)",
       plot.axes = {axis(1,partSize)	
                    axis(2,consRatio,las=1)},
-     col=gray(seq(0.9,0.1,length=10)),
+     col=gray(seq(1,0.1,length=10)),
      nlevels=10
 
 );
-
-#Do the grid
-#abline(h=20, v=0, col="black",lty=2);
-#abline(h=25, col="black",lty=2);
-#abline(v=250, col="black",lty=2);
-#abline(v=500, col="black",lty=2);
-#abline(v=1000, col="black",lty=2);
-#abline(v=2500  , col="black");
 
 mtext("Partition size (servers)",line=-14);
 

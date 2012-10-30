@@ -12,7 +12,7 @@ par(mar=c(2.8, 4.2, 0.2, 0.2),ps=14,mgp=c(1.6,0.6,0))
 durRepair <- read.table(paste(input,"/filter-duration.data",sep=""),sep='\t',header=T)
 durRebuild <- read.table(paste(input,"/wofilter-duration.data", sep=""), sep='\t', header=T)
 
-applyRepair <- read.table(paste(input,"/filter-apply.data",sep=""), sep='\t',header=T)
+applyRepair <- rfead.table(paste(input,"/filter-apply.data",sep=""), sep='\t',header=T)
 applyRebuild <- read.table(paste(input,"/wofilter-apply.data",sep=""), sep='\t', header=T)
 
 sizes <- durRepair[,1];
