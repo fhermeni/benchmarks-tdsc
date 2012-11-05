@@ -7,7 +7,7 @@ pdf(paste(output,'/availability.pdf',sep=""), height=3, width=5);
 
 
 # Trim off excess margin space (bottom, left, top, right)
-par(mar=c(3, 3, 0.5, 0.5),ps=12,mgp=c(1.5,0.6,0))
+par(mar=c(3, 3, 0.5, 0.5),ps=13,mgp=c(1.5,0.6,0))
 dur <- read.table(paste(input,"/partitions-duration.data",sep=""),sep='\t',header=T)
 apply <- read.table(paste(input,"/partitions-apply.data",sep=""),sep='\t',header=T)
 altered <- read.table(paste(input,"/impacted.data",sep=""),sep=' ',header=F)
@@ -32,7 +32,7 @@ av <- MTBF / (MTBF + MTTR) * 100;
 
 partSize <- c(250,500,1000,2500,5000)/1000;
 consRatio <- c(15,20,25,30);
-print(av);
+#print(av);
 filled.contour(consRatio,partSize,t(av),
       ylim=c(250,5000)/1000,
       xlim=c(15,30),
@@ -45,6 +45,6 @@ filled.contour(consRatio,partSize,t(av),
       nlevels=10
 );
 
-mtext("Virtual machines (x 1000)",line=-14);
+mtext("Virtual machines (x 1000)          ",line=-14);
 mtext("Availability (%)", line=-6,side=4);
 dev.off()
