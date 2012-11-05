@@ -18,6 +18,7 @@
  */
 package microDSN;
 
+import choco.cp.solver.search.integer.branching.AssignOrForbidIntVarVal;
 import choco.cp.solver.search.integer.branching.AssignVar;
 import choco.cp.solver.search.integer.valselector.MinVal;
 import choco.cp.solver.search.integer.varselector.StaticVarOrder;
@@ -33,6 +34,7 @@ import entropy.plan.choco.constraint.pack.SatisfyDemandingSlicesHeightsFastBP;
 import entropy.plan.choco.constraint.sliceScheduling.SlicesPlanner;
 import entropy.plan.choco.search.HosterVarSelector;
 import entropy.plan.choco.search.PureIncomingFirst;
+import entropy.plan.choco.search.PureIncomingFirst2;
 import entropy.plan.choco.search.StayFirstSelector3;
 import entropy.plan.durationEvaluator.DurationEvaluator;
 import entropy.vjob.PlacementConstraint;
@@ -253,7 +255,8 @@ public class VJobLauncher extends CustomizablePlannerModule {
         for (VirtualMachineActionModel vma : model.getVirtualMachineActions()) {
             actions.add(vma);
         }
-        model.addGoal(new AssignVar(new PureIncomingFirst(model, actions, new ArrayList<SConstraint>()), new MinVal()));
+        //rp.addGoal(new AssignOrForbidIntVarVal(new PureIncomingFirst2(this, model, actions), new MinVal()));
+      //  model.addGoal(new AssignVar(new PureIncomingFirst(model, actions), new MinVal()));
 
         model.addGoal(new AssignVar(new StaticVarOrder(model, new IntDomainVar[]{model.getEnd(), model.getEnd()}), new MinVal()));
         /*

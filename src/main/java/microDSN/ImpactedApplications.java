@@ -19,30 +19,44 @@ public class ImpactedApplications {
 
     public static void main(String [] args) {
 
-        if (args.length != 2) {
-            System.out.println("Usage: ImpactedApplications root vjobs");
-            System.out.println("root: the root directory of a given consolidation ratio ");
-            System.out.println("vjobs: the path to the associated vjobs inside root");
+        if (args.length != 1) {
+            System.out.println("Usage: ImpactedApplications input");
+            System.out.println("input: the directory containing the workload");
             System.exit(1);
         }
         String base = args[0];
-        String vj = args[1];
 
-        //String base ="./wkld-tdsc/r3";
-        File vJobsPath = new File(base + File.separator + vj);
-        File clientPath = new File(vJobsPath.getPath() + "/clients");
-        File configPath = new File(base + "/li");
+        int [] ratios = {3,4,5,6};
+        double [] pcts = new double[ratios.length];
+        try {
+            for (int i  = 0; i < ratios.length; i++) {
+
+                pcts[i] = impact(base + File.separator + "r" + ratios[i]);
+            }
+        } catch (Exception e) {
+            System.err.print(e.getMessage());
+            System.exit(1);
+        }
+        System.out.println("Ratio impactApps(%)");
+        for (int i = 0; i < pcts.length; i++) {
+            System.out.println(ratios[i] * 5 + " " + pcts[i]);
+        }
+    }
+
+    private static double impact(String path) throws Exception{
+
+        File vJobsPath = new File(path + File.separator + "c100p5000");
+        File clientPath = new File(path + File.separator + "c100p5000" + File.separator + "clients");
+        File configPath = new File(path + File.separator + "li");
 
         List<Configuration> configs = null;
 
         BtrPlaceVJobBuilder vb = null;
         List<VJob> vjobs = null;
         Map<String, VJob> vjobsById  =null;
-        try {
             vb = MicroBenchHandler.makeVJobBuilder();
             PathBasedIncludes incls = new PathBasedIncludes(vb, vJobsPath);
             vb.setIncludes(incls);
-            //vjobs = getVJobs(vb, clientPath);
 
             configs = getConfigurations(configPath.getPath());
             vjobs = getVJobs(vb, configs.get(0), clientPath);
@@ -51,33 +65,23 @@ public class ImpactedApplications {
                 vjobsById.put(v.id(), v);
             }
 
-        } catch (Exception ex) {
-            System.err.println(ex.getMessage());
-            System.exit(1);
-        }
-
-        System.out.println("Nodes VMs Apps impactedVMs impactedApps");
         double avgImpactedApps = 0;
         double avgImpactedVMs = 0;
         for (Configuration cfg : configs) {
             ManagedElementSet<Node> saturated = Configurations.futureOverloadedNodes(cfg);
             ManagedElementSet<VirtualMachine> impactedVMs = cfg.getRunnings(saturated);
 
-            try {
                 Set<String> impactedVJobs = getImpactedVJobs(impactedVMs, vjobsById);
                 avgImpactedApps += impactedVJobs.size();
                 avgImpactedVMs += impactedVMs.size();
-                System.out.println(cfg.getAllNodes().size() + " " + cfg.getAllVirtualMachines().size() + " " + vjobs.size() + " " + impactedVMs.size() + " " + impactedVJobs.size());
-            }catch (Exception ex) {
-                System.err.println(ex.getMessage());
-            }
+            //    System.out.println(cfg.getAllNodes().size() + " " + cfg.getAllVirtualMachines().size() + " " + vjobs.size() + " " + impactedVMs.size() + " " + impactedVJobs.size());
         }
-        System.out.println("------------------------");
         avgImpactedApps /= configs.size();
         avgImpactedVMs /= configs.size();
         int nbVMs = configs.get(0).getAllVirtualMachines().size();
-        System.out.println("avg. impacted VMs: " + avgImpactedVMs + "/" + nbVMs + " = " + (avgImpactedVMs / nbVMs * 100) + "%");
-        System.out.println("avg. impacted apps: " + avgImpactedApps + "/" + vjobs.size() + " = " + (avgImpactedApps / vjobs.size() * 100) + "%");
+        //System.out.println("avg. impacted VMs: " + avgImpactedVMs + "/" + nbVMs + " = " + (avgImpactedVMs / nbVMs * 100) + "%");
+        //System.out.println("avg. impacted apps: " + avgImpactedApps + "/" + vjobs.size() + " = " + (avgImpactedApps / vjobs.size() * 100) + "%");
+        return (avgImpactedApps / vjobs.size() * 100);
 
     }
 
