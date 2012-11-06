@@ -21,7 +21,7 @@ for set in li nr; do
 	DATA="$DATA $IN/r${r}c0p5000-$set"
     done
 done
-$EXE solvDuration+generation -xtics VMs $TICS $DATA > $OUT/filter-duration.data
+$EXE solvDuration -xtics VMs $TICS $DATA > $OUT/filter-duration.data
 $EXE apply -xtics VMs $TICS $DATA > $OUT/filter-apply.data
 $EXE nbStarts+nbRelocations+nbMigrations -xtics VMS $TICS $DATA > $OUT/filter-actions.data
 DATA=""
@@ -29,7 +29,7 @@ for set in li nr; do
     DATA="$DATA -d $set-rebuild" #The axis label
 	DATA="$DATA $IN/r3c0p5000-$set-rebuild"
 done
-$EXE solvDuration+generation -xtics VMs 15 $DATA > $OUT/wofilter-duration.data
+$EXE solvDuration -xtics VMs 15 $DATA > $OUT/wofilter-duration.data
 $EXE apply -xtics VMs 15 $DATA > $OUT/wofilter-apply.data
 $EXE nbStarts+nbRelocations+nbMigrations -xtics VMs 15 $DATA > $OUT/wofilter-actions.data
 
@@ -44,7 +44,7 @@ for set in li nr; do
     done
 done
 
-$EXE solvDuration+generation -xtics VMs $TICS $DATA > $OUT/constraints-duration.data
+$EXE solvDuration -xtics VMs $TICS $DATA > $OUT/constraints-duration.data
 $EXE apply -xtics VMs $TICS $DATA > $OUT/constraints-apply.data
 $EXE nbStarts+nbRelocations+nbMigrations -xtics VMS $TICS $DATA > $OUT/constraints-actions.data
 
@@ -58,6 +58,6 @@ for set in li nr; do
     done
 done
 done
-$EXE solvDuration+generation -xtics Part 5000,2500,1000,500,250 $TICS $DATA > $OUT/partitions-duration.data
+$EXE solvDuration -xtics Part 5000,2500,1000,500,250 $TICS $DATA > $OUT/partitions-duration.data
 $EXE apply -xtics Part 5000,2500,1000,500,250 $DATA > $OUT/partitions-apply.data
 

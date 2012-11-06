@@ -19,16 +19,14 @@ pchs <- c(4,3);
 
 colors = gray(c(0.2,0.6));
 
-    lines(sizes, dur[,8], lwd=5, type="o", pch=pchs[2], col=colors[2])
     lines(sizes, dur[,9], lwd=5, type="o", pch=pchs[1], col=colors[1])
+    lines(sizes, dur[,8], lwd=5, type="o", pch=pchs[2], col=colors[2])
 
 axis(1,seq(0,5000,by=1000))
 axis(2,seq(0,150,by=30),las=1)
 
-#box()
-
 title(ylab="Time (sec)")
 mtext("Partition size (servers)",line=-14.6);
 
-legend("topleft",c("NR + filter", "LI + filter"),col=colors,lwd=5,bty="n",pch=pchs)
+legend("topleft",c("LI + filter","NR + filter"),col=gray(c(0.6,0.2)),lwd=5,bty="n",pch=c(3,4))
 dev.off()
