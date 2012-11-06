@@ -19,15 +19,13 @@ colors = gray(seq(0.8,0.0,length=3));
 lwds <- c(3,3,3)
 for (i in 3:5) {
     lines(sizes, dur[,i] - dur[,2], lwd=lwds[i-2], type="o", pch=pchs[i-2], col=colors[i-2]);
-
 }
 
 title(ylab="Time (sec)")
 mtext("Virtual machines (x 1,000)",line=-9.5);
 
 axis(1,seq(15,30,by=5))
-axis(2,seq(-20,15,by=15),las=1)
-minor.tick(nx=1, ny=1, tick.ratio=0.5)
+axis(2,seq(-20,15,by=10),las=1)
 
 legend("bottomleft",c("33%","66%","100%"),col=colors,lwd=lwds,bty="n",pch=pchs,horiz=TRUE)
 dev.off()

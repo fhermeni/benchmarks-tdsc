@@ -23,11 +23,11 @@ pchs <- c(1,2,3,4)
 
 colors = gray(c(0.6,0.2,0.6,0.2));
 lwds <- c(3,3,5,5);
-lines(sizesRebuild, t(durRebuild[,2] + applyRebuild[,2]), lwd=lwds[1], type="o", pch=pchs[1], col=colors[1])
-lines(sizesRebuild, t(durRebuild[,3] + applyRebuild[,3]), lwd=lwds[2], type="o", pch=pchs[2], col=colors[2])
+lines(sizesRebuild, t(durRebuild[,2]), lwd=lwds[1], type="o", pch=pchs[1], col=colors[1])
+lines(sizesRebuild, t(durRebuild[,3]), lwd=lwds[2], type="o", pch=pchs[2], col=colors[2])
 
-lines(sizes, t(durRepair[,2] + applyRepair[,2]), lwd=lwds[3], type="o", pch=pchs[3], col=colors[3])
-lines(sizes, t(durRepair[,3] + applyRepair[,3]), lwd=lwds[4], type="o", pch=pchs[4], col=colors[4])
+lines(sizes, t(durRepair[,2]), lwd=lwds[3], type="o", pch=pchs[3], col=colors[3])
+lines(sizes, t(durRepair[,3]), lwd=lwds[4], type="o", pch=pchs[4], col=colors[4])
 
 
 axis(1,seq(15,30,by=5))

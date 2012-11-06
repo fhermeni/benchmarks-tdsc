@@ -112,11 +112,11 @@ sub averages {
     }
 #    print STDERR "for $k, nb = $sumSuccess\n";
     $stats{success} = $sumSuccess > 0 ? 100 * $sumSuccess / $nb : 0;
-    $stats{nbActions} = $sumSuccess > 0 ? int(($sumActions / $sumSuccess)) : "-";
-    $stats{nbMigrations} = $sumSuccess > 0 ? int(($sumMigs / $sumSuccess)) : "-";
-    $stats{nbStarts} = $sumSuccess > 0 ? int(($sumStarts / $sumSuccess))  : "-";
-    $stats{nbRelocations} = $sumSuccess > 0 ? int(($sumRelocations / $sumSuccess)) : "-";
-    $stats{apply} = $sumSuccess > 0 ? int(($sumApply / $sumSuccess)) : "-";
+    $stats{nbActions} = $sumSuccess > 0 ? sprintf("%.1f", $sumActions / $sumSuccess) : "-";
+    $stats{nbMigrations} = $sumSuccess > 0 ? sprintf("%.1f", $sumMigs / $sumSuccess) : "-";
+    $stats{nbStarts} = $sumSuccess > 0 ? sprintf("%.1f", $sumStarts / $sumSuccess)  : "-";
+    $stats{nbRelocations} = $sumSuccess > 0 ? sprintf("%.1f", $sumRelocations / $sumSuccess) : "-";
+    $stats{apply} = $sumSuccess > 0 ? sprintf("%.1f", $sumApply / $sumSuccess) : "-";
     $stats{lastCost} = $sumSuccess > 0 ? int(($sumLastCost / $sumSuccess)) : "-";
     $stats{firstCost} = $sumSuccess > 0 ? int(($sumFirstCost / $sumSuccess))  : "-";
     $stats{lastTime} = $sumSuccess > 0 ? sprintf("%.1f", $sumLastTime / $sumSuccess / 1000) : "-";

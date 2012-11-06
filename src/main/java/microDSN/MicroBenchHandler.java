@@ -150,7 +150,7 @@ public class MicroBenchHandler {
             for (Configuration[] ins : configs) {
 
                 BenchResult res = bench(ins[0], ins[1], vjobs, props);
-                System.err.println(res);
+                //System.err.println(res.plan);
                 if (out != null) {
                     out.println(res.toRaw());
                 } else {
