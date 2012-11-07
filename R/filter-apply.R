@@ -14,7 +14,7 @@ applyRebuild <- read.table(paste(input,"/wofilter-apply.data",sep=""), sep='\t',
 
 sizes <- applyRepair[,1];
 sizesRebuild <- applyRebuild[,1];
-plot(1,type="n",axes=F,xlab="",ylab="",xlim=c(15,30),ylim=c(4,12))
+plot(1,type="n",axes=F,xlab="",ylab="",xlim=c(15,30),ylim=c(5,25))
 
 pchs <- c(1,2,3,4)
 
@@ -31,10 +31,10 @@ lines(sizes, t(applyRepair[,3] - 1), lwd=lwds[4], type="o", pch=pchs[4], col=col
 
 
 axis(1,seq(15,30,by=5))
-axis(2,seq(4,12,by=2),las=1)
+axis(2,seq(5,25,by=5),las=1)
 
 title(ylab="Time (sec)");
 mtext("Virtual machines (x 1,000)",line=-14.5);
 
-legend("bottomright",c("LI","NR","LI-filter","NR-filter"),col=colors,lwd=lwds,bty="n",pch=pchs)
+legend("topleft",c("LI","NR","LI-filter","NR-filter"),col=colors,lwd=lwds,bty="n",pch=pchs)
 dev.off()

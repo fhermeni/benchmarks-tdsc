@@ -10,6 +10,6 @@ in=$1
 out=$2
 
 mkdir -p $out > /dev/null
-for r in filter-duration filter-actions filter-apply NR-cstr-duration LI-cstr-duration part-duration availability solveImpact alteredApps; do
+for r in filter-duration filter-actions filter-apply NR-cstr-duration LI-cstr-duration NR-cstr-apply LI-cstr-apply part-duration availability solveImpact alteredApps; do
     ./R/$r.R $in $out
 done
