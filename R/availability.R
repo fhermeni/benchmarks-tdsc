@@ -41,7 +41,7 @@ filled.contour(consRatio,partSize,t(av),
       ylab="Partition size (x 1000 servers)",
       plot.axes = {axis(2,seq(1,5,by=1))	
                    axis(1,consRatio,las=1)},
-      col=gray(seq(0,0.8,length=10)),
+      col=gray(seq(0.1,0.9,length=10)),
       nlevels=10
 );
 
