@@ -7,7 +7,7 @@ output <- args[2];
 
 pdf(paste(output,'/filter-duration.pdf',sep=""), height=3, width=5)
 # Trim off excess margin space (bottom, left, top, right)
-par(mar=c(2.8, 4.2, 0.2, 0.2),ps=14,mgp=c(2.3,0.6,0))
+par(mar=c(2.8, 4.2, 0.2, 0.2),ps=17,mgp=c(2.9,0.6,0))
 
 durRepair <- read.table(paste(input,"/filter-duration.data",sep=""),sep='\t',header=T)
 durRebuild <- read.table(paste(input,"/wofilter-duration.data", sep=""), sep='\t', header=T)
@@ -34,7 +34,7 @@ axis(1,seq(15,30,by=5))
 axis(2,seq(0,310,by=60),las=1)
 
 title(ylab="Time (sec)");
-mtext("Virtual machines (x 1,000)",line=-14.5);
+mtext("Virtual machines (x 1,000)",line=-14.7);
 
 legend("topright",c("LI","NR","LI-filter","NR-filter"),col=colors,lwd=lwds,bty="n",pch=pchs)
 dev.off()

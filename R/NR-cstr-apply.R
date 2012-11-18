@@ -5,7 +5,7 @@ input <- args[1];
 output <- args[2];
 pdf(paste(output,"/NR-cstrs-apply.pdf",sep=""), height=2, width=5)
 # Trim off excess margin space (bottom, left, top, right)
-par(mar=c(3.1, 3.9, 0.2, 0.5),ps=15,mgp=c(2,0.6,0))
+par(mar=c(3.1, 3.9, 0.2, 0.5),ps=17,mgp=c(2,0.6,0))
 
 dur <- read.table(paste(input,"/constraints-apply.data",sep=""),sep='\t',header=T)
 sizes <- dur[,1];

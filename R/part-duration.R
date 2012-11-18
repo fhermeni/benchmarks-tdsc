@@ -8,7 +8,7 @@ pdf(paste(output,'/partitions-duration.pdf',sep=""), height=3, width=5);
 
 
 # Trim off excess margin space (bottom, left, top, right)
-par(mar=c(3.1, 3.9, 0.2, 0.5),ps=16,mgp=c(2.3,0.6,0))
+par(mar=c(3.1, 3.9, 0.2, 0.5),ps=17,mgp=c(2.7,0.6,0))
 
 dur <- read.table(paste(input,"/partitions-duration.data",sep=""),sep='\t',header=T)
 
@@ -26,7 +26,7 @@ axis(1,seq(0,5000,by=1000))
 axis(2,seq(0,180,by=30),las=1)
 
 title(ylab="Time (sec)")
-mtext("Partition size (servers)",line=-14.6);
+mtext("Partition size (servers)",line=-14.7);
 
 legend("topleft",c("LI + filter","NR + filter"),col=gray(c(0.6,0.2)),lwd=5,bty="n",pch=c(3,4))
 dev.off()
